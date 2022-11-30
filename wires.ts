@@ -26,6 +26,8 @@ const callBatched = (fn: Fn) => $inBatch > 0
 
 // Wires
 
+// There's probably a ton of memory leaks, didn't really consider or test that while throwing this together
+
 // Would create on read be possible or efficient?
 export class Wire extends Set<Fn> {
     signal() { this.forEach(fn => fn()) }
@@ -78,34 +80,6 @@ export function wire<R>(fn: (thread: Wire) => R) {
 
     return read
 }
-
-// export function memo<R>(fn: (thread: Wire) => R) {
-//     let wires: Set<Wire> | undefined
-//     let thread = new Wire()
-//     let result: R
-//     let invalided = true
-
-//     thread.add(() => {
-//         invalided = true
-//         wires?.forEach(wire => wire.signal())
-//     })
-
-//     function read(): R
-//     function read($: Wire): R
-//     function read($?: Wire): R {
-//         if (invalided)
-//             result = fn(thread)
-//             invalided = false
-
-//         if ($) {
-//             (wires ??= new Set()).add($)
-//         }
-
-//         return result
-//     }
-
-//     return read
-// }
 
 export function signal<T>(val: T) {
     // We create the set here because what's the point of a signal if you're not going to use it
